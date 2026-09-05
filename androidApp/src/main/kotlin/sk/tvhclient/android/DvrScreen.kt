@@ -636,6 +636,12 @@ private fun RecordingList(
     }
 }
 
+private fun isMediaPlayKey(code: Int): Boolean = when (code) {
+    android.view.KeyEvent.KEYCODE_MEDIA_PLAY,
+    android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> true
+    else -> false
+}
+
 /** Spusti prehravanie DVR nahravky. */
 internal fun playDvr(context: Context, entry: DvrEntry) {
     val srv = Tvh.store.active() ?: return
@@ -672,6 +678,20 @@ private fun RecordingCard(entry: DvrEntry, context: Context, progressTick: Int) 
                     .dpadFocusable(RoundedCornerShape(14.dp))
                 else Modifier.dpadFocusable()
             )
+            .onPreviewKeyEvent { ev ->
+                val k = ev.nativeKeyEvent
+                if (!isMediaPlayKey(k.keyCode)) return@onPreviewKeyEvent false
+                when (k.action) {
+                    android.view.KeyEvent.ACTION_DOWN -> {
+                        if (k.repeatCount == 0) {
+                            playDvr(context, entry)
+                            true
+                        } else true
+                    }
+                    android.view.KeyEvent.ACTION_UP -> true
+                    else -> false
+                }
+            }
             // M483: dlhe podrzanie = ponuka zmazat nahravku
             .combinedClickable(
                 onClick = { playDvr(context, entry) },
@@ -764,6 +784,20 @@ private fun RecordingRow(entry: DvrEntry, context: Context, progressTick: Int) {
                     .dpadFocusable(RoundedCornerShape(14.dp))
                 else Modifier.dpadFocusable()
             )
+            .onPreviewKeyEvent { ev ->
+                val k = ev.nativeKeyEvent
+                if (!isMediaPlayKey(k.keyCode)) return@onPreviewKeyEvent false
+                when (k.action) {
+                    android.view.KeyEvent.ACTION_DOWN -> {
+                        if (k.repeatCount == 0) {
+                            playDvr(context, entry)
+                            true
+                        } else true
+                    }
+                    android.view.KeyEvent.ACTION_UP -> true
+                    else -> false
+                }
+            }
             // M483: dlhe podrzanie = ponuka zmazat nahravku
             .combinedClickable(
                 onClick = { playDvr(context, entry) },
@@ -1722,17 +1756,24 @@ private fun ArcRecCard(e: DvrEntry, picon: String?, loader: coil.ImageLoader, co
             .dpadFocusable(RoundedCornerShape(10.dp))
             .onPreviewKeyEvent { ev ->
                 val k = ev.nativeKeyEvent
-                val ok = k.keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER ||
+                val isPlayKey = isMediaPlayKey(k.keyCode)
+                val ok = isPlayKey ||
+                    k.keyCode == android.view.KeyEvent.KEYCODE_DPAD_CENTER ||
                     k.keyCode == android.view.KeyEvent.KEYCODE_ENTER ||
                     k.keyCode == android.view.KeyEvent.KEYCODE_NUMPAD_ENTER
                 if (!ok) return@onPreviewKeyEvent false
                 when (k.action) {
-                    android.view.KeyEvent.ACTION_DOWN -> when (k.repeatCount) {
-                        0 -> { longFired = false; false }          // nechaj clickable trackovat kratky klik
-                        1 -> { longFired = true; onLong(); true }   // dlhe OK -> info, pohlt
-                        else -> true
+                    android.view.KeyEvent.ACTION_DOWN -> {
+                        if (isPlayKey) {
+                            onClick(); true
+                        } else when (k.repeatCount) {
+                            0 -> { longFired = false; false }          // nechaj clickable trackovat kratky klik
+                            1 -> { longFired = true; onLong(); true }   // dlhe OK -> info, pohlt
+                            else -> true
+                        }
                     }
-                    android.view.KeyEvent.ACTION_UP -> if (longFired) { longFired = false; true } else false
+                    android.view.KeyEvent.ACTION_UP -> if (isPlayKey) true
+                    else if (longFired) { longFired = false; true } else false
                     else -> false
                 }
             }

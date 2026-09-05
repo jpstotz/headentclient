@@ -2,6 +2,7 @@ package sk.tvhclient.android
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -2623,11 +2624,13 @@ class PlayerActivity : ComponentActivity() {
 
         // DIAGNOSTIKA (volitelna v nastaveniach): kod nezvycajneho klavesu
         if (remoteDebug && down && !isCommonKey(kc)) {
+            var keyCode = android.view.KeyEvent.keyCodeToString(kc)
             Toast.makeText(
                 this,
-                "Klávesa: $kc (${android.view.KeyEvent.keyCodeToString(kc)})",
+                "Klávesa: $kc (${keyCode})",
                 Toast.LENGTH_SHORT
             ).show()
+            Log.d("HEADEND", "Remote code (${keyCode})")
         }
 
         // M370: aktivne hladanie s fokusom na textovom poli -> text spracuje system/IME;
