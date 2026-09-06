@@ -2622,15 +2622,15 @@ class PlayerActivity : ComponentActivity() {
         val down = event.action == android.view.KeyEvent.ACTION_DOWN
         val kc = event.keyCode
 
-        // DIAGNOSTIKA (volitelna v nastaveniach): kod nezvycajneho klavesu
+        // DIAGNOSTICS (optional in settings): code for an unusual key
         if (remoteDebug && down && !isCommonKey(kc)) {
-            var keyCode = android.view.KeyEvent.keyCodeToString(kc)
+            val keyCodeStr = "Remote code: $kc (${android.view.KeyEvent.keyCodeToString(kc)})"
             Toast.makeText(
                 this,
-                "Klávesa: $kc (${keyCode})",
+                keyCodeStr,
                 Toast.LENGTH_SHORT
             ).show()
-            Log.d("HEADEND", "Remote code (${keyCode})")
+            Log.d("HEADEND", keyCodeStr)
         }
 
         // M370: aktivne hladanie s fokusom na textovom poli -> text spracuje system/IME;
@@ -3871,11 +3871,15 @@ class PlayerActivity : ComponentActivity() {
                 if (aCh != null) {
                     val aSel = archiveChoiceSelState.value
                     Box(
-                        Modifier.fillMaxSize().background(Color(0xCC0B1220)),
+                        Modifier
+                            .fillMaxSize()
+                            .background(Color(0xCC0B1220)),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
-                            Modifier.fillMaxWidth(0.8f).widthIn(max = 460.dp)
+                            Modifier
+                                .fillMaxWidth(0.8f)
+                                .widthIn(max = 460.dp)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color(0xFF1B2433))
                                 .padding(horizontal = 24.dp, vertical = 28.dp),
@@ -3898,14 +3902,21 @@ class PlayerActivity : ComponentActivity() {
                                 androidx.compose.material3.Icon(
                                     Icons.Default.Voicemail, contentDescription = null,
                                     tint = Color(0xFFE53935),
-                                    modifier = Modifier.size(18.dp).scale(scaleX = 1f, scaleY = -1f))
+                                    modifier = Modifier
+                                        .size(18.dp)
+                                        .scale(scaleX = 1f, scaleY = -1f))
                             }
                             Spacer(Modifier.height(26.dp))
                             Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                                 Box(
-                                    Modifier.clip(RoundedCornerShape(12.dp))
+                                    Modifier
+                                        .clip(RoundedCornerShape(12.dp))
                                         .background(if (aSel == 0) Color(0x553B82F6) else Color.Transparent)
-                                        .border(1.dp, if (aSel == 0) Color(0xFF3B82F6) else Color(0x33FFFFFF), RoundedCornerShape(12.dp))
+                                        .border(
+                                            1.dp,
+                                            if (aSel == 0) Color(0xFF3B82F6) else Color(0x33FFFFFF),
+                                            RoundedCornerShape(12.dp)
+                                        )
                                         .clickable { resolveArchiveChoice(false) }
                                         .padding(horizontal = 20.dp, vertical = 12.dp)
                                 ) {
@@ -3914,9 +3925,14 @@ class PlayerActivity : ComponentActivity() {
                                         fontWeight = FontWeight.SemiBold)
                                 }
                                 Box(
-                                    Modifier.clip(RoundedCornerShape(12.dp))
+                                    Modifier
+                                        .clip(RoundedCornerShape(12.dp))
                                         .background(if (aSel == 1) Color(0x553B82F6) else Color.Transparent)
-                                        .border(1.dp, if (aSel == 1) Color(0xFF3B82F6) else Color(0x33FFFFFF), RoundedCornerShape(12.dp))
+                                        .border(
+                                            1.dp,
+                                            if (aSel == 1) Color(0xFF3B82F6) else Color(0x33FFFFFF),
+                                            RoundedCornerShape(12.dp)
+                                        )
                                         .clickable { resolveArchiveChoice(true) }
                                         .padding(horizontal = 20.dp, vertical = 12.dp)
                                 ) {
@@ -3942,7 +3958,9 @@ class PlayerActivity : ComponentActivity() {
                     val ctxModern = isModernUi()
                     val ctxAccent = playerAccent()
                     Box(
-                        Modifier.fillMaxSize().background(Color(0xCC0B1220))
+                        Modifier
+                            .fillMaxSize()
+                            .background(Color(0xCC0B1220))
                             .clickable { closeChannelContextMenu() },   // ťuknutie mimo zatvori + blokuje pozadie
                         contentAlignment = Alignment.Center
                     ) {
@@ -3950,7 +3968,9 @@ class PlayerActivity : ComponentActivity() {
                             Modifier
                                 .then(
                                     if (ctxModern) Modifier.widthIn(min = 300.dp, max = 360.dp)
-                                    else Modifier.fillMaxWidth(0.7f).widthIn(max = 440.dp)
+                                    else Modifier
+                                        .fillMaxWidth(0.7f)
+                                        .widthIn(max = 440.dp)
                                 )
                                 .clip(RoundedCornerShape(if (ctxModern) 18.dp else 20.dp))
                                 .background(if (ctxModern) Color(0xFF0F1E3D) else Color(0xFF1B2433))
@@ -3992,11 +4012,19 @@ class PlayerActivity : ComponentActivity() {
                                 val selBg = if (ctxModern) ctxAccent.copy(alpha = 0.28f) else Color(0x553B82F6)
                                 val selBorder = if (ctxModern) ctxAccent else Color(0xFF3B82F6)
                                 Row(
-                                    Modifier.fillMaxWidth().padding(vertical = 4.dp)
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(if (rowSel) selBg else Color.Transparent)
-                                        .border(1.dp, if (rowSel) selBorder else Color(0x33FFFFFF), RoundedCornerShape(12.dp))
-                                        .clickable { ctxMenuSelState.value = i; activateCtxMenu(key) }
+                                        .border(
+                                            1.dp,
+                                            if (rowSel) selBorder else Color(0x33FFFFFF),
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        .clickable {
+                                            ctxMenuSelState.value = i; activateCtxMenu(key)
+                                        }
                                         .padding(horizontal = 16.dp, vertical = 13.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -4031,12 +4059,16 @@ class PlayerActivity : ComponentActivity() {
             if (exitConfirmState.value) {
                 val eSel = exitConfirmSelState.value
                 Box(
-                    Modifier.fillMaxSize().background(Color(0xCC0B1220))
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color(0xCC0B1220))
                         .clickable { exitConfirmState.value = false },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
-                        Modifier.fillMaxWidth(0.7f).widthIn(max = 440.dp)
+                        Modifier
+                            .fillMaxWidth(0.7f)
+                            .widthIn(max = 440.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color(0xFF1B2433))
                             .padding(horizontal = 28.dp, vertical = 28.dp),
@@ -4056,9 +4088,14 @@ class PlayerActivity : ComponentActivity() {
                         Spacer(Modifier.height(24.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                             Box(
-                                Modifier.clip(RoundedCornerShape(12.dp))
+                                Modifier
+                                    .clip(RoundedCornerShape(12.dp))
                                     .background(if (eSel == 0) Color(0x553B82F6) else Color.Transparent)
-                                    .border(1.dp, if (eSel == 0) Color(0xFF3B82F6) else Color(0x33FFFFFF), RoundedCornerShape(12.dp))
+                                    .border(
+                                        1.dp,
+                                        if (eSel == 0) Color(0xFF3B82F6) else Color(0x33FFFFFF),
+                                        RoundedCornerShape(12.dp)
+                                    )
                                     .clickable { exitConfirmState.value = false }
                                     .padding(horizontal = 22.dp, vertical = 12.dp)
                             ) {
@@ -4067,9 +4104,14 @@ class PlayerActivity : ComponentActivity() {
                                     fontWeight = FontWeight.SemiBold)
                             }
                             Box(
-                                Modifier.clip(RoundedCornerShape(12.dp))
+                                Modifier
+                                    .clip(RoundedCornerShape(12.dp))
                                     .background(if (eSel == 1) Color(0x55FF6B6B) else Color.Transparent)
-                                    .border(1.dp, if (eSel == 1) Color(0xFFFF6B6B) else Color(0x33FFFFFF), RoundedCornerShape(12.dp))
+                                    .border(
+                                        1.dp,
+                                        if (eSel == 1) Color(0xFFFF6B6B) else Color(0x33FFFFFF),
+                                        RoundedCornerShape(12.dp)
+                                    )
                                     .clickable { finish() }
                                     .padding(horizontal = 22.dp, vertical = 12.dp)
                             ) {
@@ -4083,11 +4125,14 @@ class PlayerActivity : ComponentActivity() {
             // M430: kompaktny zap pas — cislo · kanal / program · cas / priebeh
             if (zapBarVisible.value && !infoVisibleState.value) {
                 Box(
-                    Modifier.fillMaxSize().padding(start = 28.dp, bottom = 32.dp),
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 28.dp, bottom = 32.dp),
                     contentAlignment = Alignment.BottomStart
                 ) {
                     Row(
-                        Modifier.widthIn(min = 300.dp, max = 560.dp)
+                        Modifier
+                            .widthIn(min = 300.dp, max = 560.dp)
                             .shadow(8.dp, RoundedCornerShape(16.dp))
                             .clip(RoundedCornerShape(16.dp))
                             .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.94f))
@@ -4144,11 +4189,16 @@ class PlayerActivity : ComponentActivity() {
                         }
                         if (zapBarProgress.value > 0f) {
                             Spacer(Modifier.height(8.dp))
-                            Box(Modifier.fillMaxWidth().height(4.dp)
+                            Box(Modifier
+                                .fillMaxWidth()
+                                .height(4.dp)
                                 .clip(RoundedCornerShape(2.dp))
                                 .background(MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.25f))) {
-                                Box(Modifier.fillMaxWidth(zapBarProgress.value).fillMaxHeight()
-                                    .clip(RoundedCornerShape(2.dp)).background(MaterialTheme.colorScheme.primary))
+                                Box(Modifier
+                                    .fillMaxWidth(zapBarProgress.value)
+                                    .fillMaxHeight()
+                                    .clip(RoundedCornerShape(2.dp))
+                                    .background(MaterialTheme.colorScheme.primary))
                             }
                         }
                         }
@@ -4158,12 +4208,16 @@ class PlayerActivity : ComponentActivity() {
             // Info o relacii (detail) — overlay v style prehravaca
             if (infoVisibleState.value) {
                 Box(
-                    Modifier.fillMaxSize().background(Color(0xCC0B1220))
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color(0xCC0B1220))
                         .clickable { closeChannelInfo() },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
-                        Modifier.fillMaxWidth(0.78f).widthIn(max = 560.dp)
+                        Modifier
+                            .fillMaxWidth(0.78f)
+                            .widthIn(max = 560.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .background(Color(0xFF1B2433))
                             .padding(horizontal = 24.dp, vertical = 24.dp)
@@ -4197,7 +4251,8 @@ class PlayerActivity : ComponentActivity() {
                             val sel = infoRecSelState.value
                             Spacer(Modifier.height(16.dp))
                             Row(
-                                Modifier.fillMaxWidth()
+                                Modifier
+                                    .fillMaxWidth()
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(if (sel) Color(0x553B82F6) else Color.Transparent)
                                     .border(
@@ -5980,16 +6035,20 @@ private fun PlayerUi(
             .fillMaxSize()
             .background(Color.Black)
             .pointerInput(isTvGest, seekable, timeshiftEngaged, controlsVisible) {
-                val audio = ctx.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
+                val audio =
+                    ctx.getSystemService(android.content.Context.AUDIO_SERVICE) as android.media.AudioManager
                 val act = ctx as? android.app.Activity
-                val maxVol = audio.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC).coerceAtLeast(1)
+                val maxVol = audio.getStreamMaxVolume(android.media.AudioManager.STREAM_MUSIC)
+                    .coerceAtLeast(1)
                 val slop = viewConfiguration.touchSlop
                 awaitEachGesture {
                     val down = awaitFirstDown(requireUnconsumed = false)
-                    var mode = 0          // 0=nerozhodnute, 1=seek(H), 2=hlasitost(V vpravo), 3=jas(V vlavo), 4=otvor zoznam (V zhora)
+                    var mode =
+                        0          // 0=nerozhodnute, 1=seek(H), 2=hlasitost(V vpravo), 3=jas(V vlavo), 4=otvor zoznam (V zhora)
                     var startVol = 0
                     var startBright = 0.5f
-                    val guardTop = 48.dp.toPx()              // odsadenie od hornej hrany (systemova lista/shade)
+                    val guardTop =
+                        48.dp.toPx()              // odsadenie od hornej hrany (systemova lista/shade)
                     while (true) {
                         val ev = awaitPointerEvent()
                         val ch = ev.changes.firstOrNull { it.id == down.id } ?: break
@@ -6002,8 +6061,12 @@ private fun PlayerUi(
                         // M565: gesta prehravaca (hlasitost, jas, seek, vysunutie zoznamu) su vypnute,
                         // kym je otvorene akekolvek menu — tento detektor nerespektuje consume()
                         // deti (awaitFirstDown(requireUnconsumed = false)), takze ho treba vypnut tu
-                        val overlayOpen = showChannelList || showMoreSheet || menu != null || showOptions
-                        if (mode == 0 && !overlayOpen && !inBar && (kotlin.math.abs(dx) > slop || kotlin.math.abs(dy) > slop)) {
+                        val overlayOpen =
+                            showChannelList || showMoreSheet || menu != null || showOptions
+                        if (mode == 0 && !overlayOpen && !inBar && (kotlin.math.abs(dx) > slop || kotlin.math.abs(
+                                dy
+                            ) > slop)
+                        ) {
                             mode = if (kotlin.math.abs(dx) >= kotlin.math.abs(dy)) {
                                 if (seekable || timeshiftEngaged) 1 else 0   // seek len ked je co pretacat
                             } else if (isTvGest) {
@@ -6012,9 +6075,11 @@ private fun PlayerUi(
                                 0                                            // horny okraj (systemova lista/wifi) -> ziadne vertikalne gesto
                             } else if (down.position.x < size.width * 0.25f) {
                                 val cur = act?.window?.attributes?.screenBrightness ?: -1f
-                                startBright = if (cur in 0f..1f) cur else 0.5f; 3                              // lavych 25% = jas
+                                startBright =
+                                    if (cur in 0f..1f) cur else 0.5f; 3                              // lavych 25% = jas
                             } else if (down.position.x >= size.width * 0.75f) {
-                                startVol = audio.getStreamVolume(android.media.AudioManager.STREAM_MUSIC); 2   // pravych 25% = hlasitost
+                                startVol =
+                                    audio.getStreamVolume(android.media.AudioManager.STREAM_MUSIC); 2   // pravych 25% = hlasitost
                             } else if (dy > 0) {
                                 4                                            // stred 50% (0.25-0.75), tah dole -> otvor zoznam
                             } else {
@@ -6024,15 +6089,27 @@ private fun PlayerUi(
                         if (mode != 0) ch.consume()
                         when (mode) {
                             1 -> scrubSecState = (dx / size.width * 90f).toInt()
-                            4 -> listFrac = (dy / (size.height * 0.5f) * 0.7f).coerceIn(0f, 1f)   // vysuvanie zhora za prstom (o 30% pomalsie)
+                            4 -> listFrac = (dy / (size.height * 0.5f) * 0.7f).coerceIn(
+                                0f,
+                                1f
+                            )   // vysuvanie zhora za prstom (o 30% pomalsie)
                             2 -> {
-                                val nv = (startVol - dy / size.height * maxVol).toInt().coerceIn(0, maxVol)
-                                audio.setStreamVolume(android.media.AudioManager.STREAM_MUSIC, nv, 0)
+                                val nv = (startVol - dy / size.height * maxVol).toInt()
+                                    .coerceIn(0, maxVol)
+                                audio.setStreamVolume(
+                                    android.media.AudioManager.STREAM_MUSIC,
+                                    nv,
+                                    0
+                                )
                                 volPctState = nv * 100 / maxVol
                             }
+
                             3 -> {
                                 val nb = (startBright - dy / size.height).coerceIn(0.01f, 1f)
-                                act?.window?.let { w -> val lp = w.attributes; lp.screenBrightness = nb; w.attributes = lp }
+                                act?.window?.let { w ->
+                                    val lp = w.attributes; lp.screenBrightness = nb; w.attributes =
+                                    lp
+                                }
                                 brightPctState = (nb * 100).toInt()
                             }
                         }
@@ -6045,14 +6122,19 @@ private fun PlayerUi(
                         val open = listFrac > 0.33f
                         showChannelList = open        // open -> LaunchedEffect dotiahne na 1
                         if (!open) listScope.launch {
-                            androidx.compose.animation.core.animate(listFrac, 0f) { v, _ -> listFrac = v }
+                            androidx.compose.animation.core.animate(
+                                listFrac,
+                                0f
+                            ) { v, _ -> listFrac = v }
                         }
                     }
                 }
             }
             .pointerInput(Unit) {
                 detectTapGestures(
-                    onTap = { if (menu != null) menu = null else controlsVisible = !controlsVisible },
+                    onTap = {
+                        if (menu != null) menu = null else controlsVisible = !controlsVisible
+                    },
                     onDoubleTap = { off -> onDoubleTapSeek(off.x > size.width / 2f) }
                 )
             }
@@ -6159,7 +6241,9 @@ private fun PlayerUi(
             val fwd = seekHint > 0
             val label = if (fwd) "+$seekHint  ›" else "‹  $seekHint"
             Box(
-                Modifier.fillMaxSize().padding(horizontal = 44.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 44.dp),
                 contentAlignment = if (fwd) Alignment.CenterEnd else Alignment.CenterStart
             ) {
                 Text(
@@ -6198,7 +6282,9 @@ private fun PlayerUi(
                     )
                     androidx.compose.material3.LinearProgressIndicator(
                         progress = { pct / 100f },
-                        modifier = Modifier.width(170.dp).padding(top = 10.dp),
+                        modifier = Modifier
+                            .width(170.dp)
+                            .padding(top = 10.dp),
                         color = playerAccent(),
                         trackColor = Color(0x55FFFFFF)
                     )
@@ -6213,7 +6299,9 @@ private fun PlayerUi(
             val core = if (mm > 0) "$mm:" + ss.toString().padStart(2, '0') else "${ss}s"
             val label = (if (s >= 0) "+" else "\u2212") + core
             Box(
-                Modifier.fillMaxSize().padding(top = 56.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = 56.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 Text(
@@ -6250,7 +6338,9 @@ private fun PlayerUi(
             exit = fadeOut(),
             modifier = Modifier.fillMaxSize()
         ) {
-            Box(Modifier.fillMaxSize().systemBarsPadding()) {
+            Box(Modifier
+                .fillMaxSize()
+                .systemBarsPadding()) {
                 val order = playerControlOrder(onPrevChannel != null, seekable, pipButton, timeshiftEngaged, profileSwitch,
                     dvrActivity?.dvrRecordVisible() == true, dvrActivity?.teletextVisible() == true)
                 // fokusove zvyraznenie len na TV (D-pad); na telefone (dotyk) ziadne "vybrate" tlacidlo
@@ -6427,7 +6517,7 @@ private fun PlayerUi(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
                                 .fillMaxWidth()
-                            .clip(RoundedCornerShape(8.dp))
+                                .clip(RoundedCornerShape(8.dp))
                                 .then(
                                     if (seekFocused) Modifier.border(
                                         2.dp, playerFg(), RoundedCornerShape(8.dp)
@@ -6438,7 +6528,9 @@ private fun PlayerUi(
                             Text(fmtMs(cur), color = playerFg(),
                                 style = MaterialTheme.typography.bodySmall)
                             Box(
-                                modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 8.dp),
                                 contentAlignment = Alignment.Center
                             ) {
                                 androidx.compose.material3.Slider(
@@ -6768,7 +6860,9 @@ private fun PlayerUi(
                 androidx.compose.material3.Surface(
                     color = playerScrim(),
                     shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth(0.72f).widthIn(max = 560.dp)
+                    modifier = Modifier
+                        .fillMaxWidth(0.72f)
+                        .widthIn(max = 560.dp)
                 ) {
                     Column(
                         Modifier
@@ -6817,7 +6911,9 @@ private fun PlayerUi(
                             Spacer(Modifier.height(12.dp))
                             androidx.compose.material3.LinearProgressIndicator(
                                 progress = { fracI },
-                                modifier = Modifier.fillMaxWidth().height(4.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(4.dp),
                                 trackColor = playerTrack()
                             )
                             Spacer(Modifier.height(6.dp))
@@ -6894,7 +6990,9 @@ private fun PlayerUi(
                     .clipToBounds()
                     .background(playerScrim())
               ) {
-                Column(Modifier.fillMaxWidth().height(fullH)) {   // obsah v plnej vyske, klipovany zhora
+                Column(Modifier
+                    .fillMaxWidth()
+                    .height(fullH)) {   // obsah v plnej vyske, klipovany zhora
                 // hlavicka = uchyt: tah hore zatvori (nebrani rolovaniu zoznamu), klik tiez zatvori
                 Column(
                     Modifier
@@ -6963,7 +7061,8 @@ private fun PlayerUi(
                                             val ev = awaitPointerEvent(
                                                 androidx.compose.ui.input.pointer.PointerEventPass.Initial
                                             )
-                                            val ch = ev.changes.firstOrNull { it.id == pid } ?: break
+                                            val ch =
+                                                ev.changes.firstOrNull { it.id == pid } ?: break
                                             if (!ch.pressed) break
                                             totalDy += ch.position.y - ch.previousPosition.y
                                             if (!decided && kotlin.math.abs(totalDy) > 12f) {
@@ -7032,7 +7131,9 @@ private fun PlayerUi(
                                             contentDescription = null,
                                             imageLoader = loader,
                                             contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                                            modifier = Modifier.fillMaxSize().padding(2.dp)
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(2.dp)
                                         )
                                     } else {
                                         Text(
@@ -7055,7 +7156,8 @@ private fun PlayerUi(
                                         if (ch.recording) {
                                             Spacer(Modifier.width(6.dp))
                                             Box(
-                                                Modifier.size(8.dp)
+                                                Modifier
+                                                    .size(8.dp)
                                                     .clip(androidx.compose.foundation.shape.CircleShape)
                                                     .background(Color(0xFFE53935))
                                             )
@@ -7149,7 +7251,9 @@ private fun PlayerUi(
                     // (vyrez nahladu). Bez nahladu ho nealokujeme -> svizne prve otvorenie.
                     .then(
                         if (inPreview)
-                            Modifier.graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+                            Modifier.graphicsLayer {
+                                compositingStrategy = CompositingStrategy.Offscreen
+                            }
                         else Modifier
                     )
                     .drawBehind {
@@ -7166,7 +7270,9 @@ private fun PlayerUi(
             ) {
                 // horna lista: datum vlavo, hodiny vpravo
                 Row(
-                    Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 12.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 22.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(dateStr, color = playerFgDim(), style = MaterialTheme.typography.titleMedium)
@@ -7186,7 +7292,9 @@ private fun PlayerUi(
                                     androidx.compose.material.icons.Icons.Default.Search, null,
                                     tint = playerFgDim())
                             },
-                            modifier = Modifier.weight(1f).focusRequester(searchFocus)
+                            modifier = Modifier
+                                .weight(1f)
+                                .focusRequester(searchFocus)
                         )
                     } else {
                         // M369b: pilulka filtra skupiny v hornom pruhu (neukrojuje vysku zoznamu)
@@ -7198,7 +7306,11 @@ private fun PlayerUi(
                                     .background(if (channelGroupPicker) selTintC else cardC)
                                     .then(
                                         if (channelGroupPicker)
-                                            Modifier.border(2.dp, accentC, RoundedCornerShape(16.dp))
+                                            Modifier.border(
+                                                2.dp,
+                                                accentC,
+                                                RoundedCornerShape(16.dp)
+                                            )
                                         else Modifier
                                     )
                                     .padding(horizontal = 12.dp, vertical = 6.dp),
@@ -7246,10 +7358,14 @@ private fun PlayerUi(
                     Text(hhmm(nowT), color = playerFg(),
                         style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
                 }
-                Row(Modifier.fillMaxWidth().weight(1f)) {
+                Row(Modifier
+                    .fillMaxWidth()
+                    .weight(1f)) {
                     // LAVA: zoznam kanalov (karty s ramikom)
                     Column(
-                        modifier = Modifier.fillMaxHeight().fillMaxWidth(0.46f)
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(0.46f)
                             .padding(horizontal = 12.dp, vertical = 4.dp)
                     ) {
                       if (searchActive) {
@@ -7278,12 +7394,19 @@ private fun PlayerUi(
                                             .padding(vertical = 4.dp)
                                             .clip(RoundedCornerShape(12.dp))
                                             .background(if (selRow) selTintC else cardC)
-                                            .border(1.dp, if (selRow) accentC else borderC, RoundedCornerShape(12.dp))
+                                            .border(
+                                                1.dp,
+                                                if (selRow) accentC else borderC,
+                                                RoundedCornerShape(12.dp)
+                                            )
                                             .padding(horizontal = 12.dp, vertical = 9.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Box(
-                                            Modifier.size(54.dp, 40.dp).clip(RoundedCornerShape(6.dp)).background(piconBackground()),
+                                            Modifier
+                                                .size(54.dp, 40.dp)
+                                                .clip(RoundedCornerShape(6.dp))
+                                                .background(piconBackground()),
                                             contentAlignment = Alignment.Center
                                         ) {
                                             if (ch.piconUrl != null) {
@@ -7291,7 +7414,9 @@ private fun PlayerUi(
                                                     model = remember(ch.piconUrl) { ImageRequest.Builder(ctx).data(ch.piconUrl).size(120).build() },
                                                     contentDescription = null, imageLoader = loaderT,
                                                     contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                                                    modifier = Modifier.fillMaxSize().padding(3.dp)
+                                                    modifier = Modifier
+                                                        .fillMaxSize()
+                                                        .padding(3.dp)
                                                 )
                                             } else Text(ch.name.take(3).uppercase(), color = playerFg(), style = MaterialTheme.typography.labelMedium)
                                         }
@@ -7333,12 +7458,19 @@ private fun PlayerUi(
                                     .padding(vertical = 4.dp)
                                     .clip(RoundedCornerShape(12.dp))
                                     .background(if (selRow) selTintC else cardC)
-                                    .border(1.dp, if (selRow) accentC else borderC, RoundedCornerShape(12.dp))
+                                    .border(
+                                        1.dp,
+                                        if (selRow) accentC else borderC,
+                                        RoundedCornerShape(12.dp)
+                                    )
                                     .padding(horizontal = 12.dp, vertical = 9.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(
-                                    Modifier.size(54.dp, 40.dp).clip(RoundedCornerShape(6.dp)).background(piconBackground()),
+                                    Modifier
+                                        .size(54.dp, 40.dp)
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(piconBackground()),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     if (ch.piconUrl != null) {
@@ -7346,7 +7478,9 @@ private fun PlayerUi(
                                             model = remember(ch.piconUrl) { ImageRequest.Builder(ctx).data(ch.piconUrl).size(120).build() },
                                             contentDescription = null, imageLoader = loaderT,
                                             contentScale = androidx.compose.ui.layout.ContentScale.Fit,
-                                            modifier = Modifier.fillMaxSize().padding(3.dp)
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .padding(3.dp)
                                         )
                                     } else Text(ch.name.take(3).uppercase(), color = playerFg(), style = MaterialTheme.typography.labelMedium)
                                 }
@@ -7358,7 +7492,8 @@ private fun PlayerUi(
                                             modifier = Modifier.weight(1f, fill = false))
                                         if (ch.recording) {
                                             Spacer(Modifier.width(6.dp))
-                                            Box(Modifier.size(8.dp)
+                                            Box(Modifier
+                                                .size(8.dp)
                                                 .clip(androidx.compose.foundation.shape.CircleShape)
                                                 .background(Color(0xFFE53935)))
                                         }
@@ -7393,20 +7528,27 @@ private fun PlayerUi(
                       }
                     }
                     // PRAVA: detail vybraneho + nahlad hraneho + dalsie programy
-                    Column(Modifier.fillMaxHeight().weight(1f).padding(horizontal = 22.dp, vertical = 6.dp)) {
+                    Column(Modifier
+                        .fillMaxHeight()
+                        .weight(1f)
+                        .padding(horizontal = 22.dp, vertical = 6.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 (curT?.title?.takeIf { it.isNotBlank() }) ?: liveChannels.getOrNull(detT)?.nowTitle ?: "",
                                 color = playerFg(), style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold, maxLines = 1,
-                                modifier = Modifier.weight(1f).basicMarquee(iterations = Int.MAX_VALUE)
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .basicMarquee(iterations = Int.MAX_VALUE)
                             )
                             if (liveChannels.getOrNull(detT)?.recording == true) {
                                 Spacer(Modifier.width(8.dp))
                                 androidx.compose.material3.Icon(
                                     Icons.Default.Voicemail, contentDescription = null,
                                     tint = Color(0xFFE53935),
-                                    modifier = Modifier.size(22.dp).scale(scaleX = 1f, scaleY = -1f)
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .scale(scaleX = 1f, scaleY = -1f)
                                 )
                             }
                         }
@@ -7416,7 +7558,10 @@ private fun PlayerUi(
                                 modifier = Modifier.padding(top = 4.dp))
                         // nahlad: zive video hraneho kanala — VLC povrch presvita cez dieru v scrime
                         Box(
-                            Modifier.padding(top = 12.dp).height(156.dp).aspectRatio(16f / 9f)
+                            Modifier
+                                .padding(top = 12.dp)
+                                .height(156.dp)
+                                .aspectRatio(16f / 9f)
                                 .clip(RoundedCornerShape(10.dp))
                                 .onGloballyPositioned { c ->
                                     val p = c.positionInRoot()
@@ -7437,12 +7582,16 @@ private fun PlayerUi(
                         if (nextT.isNotEmpty()) {
                             Spacer(Modifier.height(12.dp))
                             nextT.forEach { ev ->
-                                Row(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                                Row(Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)) {
                                     Text(hhmm(ev.start), color = accentC,
                                         style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold,
                                         modifier = Modifier.width(58.dp))
                                     Text(ev.title, color = playerFg(), style = MaterialTheme.typography.bodyMedium,
-                                        maxLines = 1, modifier = Modifier.weight(1f).basicMarquee(iterations = Int.MAX_VALUE))
+                                        maxLines = 1, modifier = Modifier
+                                            .weight(1f)
+                                            .basicMarquee(iterations = Int.MAX_VALUE))
                                 }
                             }
                         }
@@ -7567,7 +7716,11 @@ private fun PlayerUi(
                             Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(if (sel) (if (isModernUi()) playerAccent().copy(alpha = 0.35f) else Color(0x553B82F6)) else Color.Transparent)   // M562
+                                .background(
+                                    if (sel) (if (isModernUi()) playerAccent().copy(alpha = 0.35f) else Color(
+                                        0x553B82F6
+                                    )) else Color.Transparent
+                                )   // M562
                                 .clickable { onOptionsSelect(idx) }
                                 .padding(horizontal = 16.dp, vertical = 14.dp),
                             verticalAlignment = Alignment.CenterVertically
@@ -7643,7 +7796,9 @@ private fun PlayerUi(
         // Rodicovsky zamok: zadanie PIN (cislice z dialkoveho riesi Activity)
         if (pinPrompt) {
             Box(
-                Modifier.fillMaxSize().background(Color(0x990B1220))
+                Modifier
+                    .fillMaxSize()
+                    .background(Color(0x990B1220))
                     .pointerInput(Unit) { detectTapGestures { } },   // blokuj vstup do pozadia
                 contentAlignment = Alignment.Center
             ) {
@@ -7667,9 +7822,14 @@ private fun PlayerUi(
                         Row(horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                             repeat(4) { i ->
                                 Box(
-                                    Modifier.size(18.dp).clip(CircleShape).background(
-                                        if (i < pinLen) MaterialTheme.colorScheme.primary else Color(0x44FFFFFF)
-                                    )
+                                    Modifier
+                                        .size(18.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            if (i < pinLen) MaterialTheme.colorScheme.primary else Color(
+                                                0x44FFFFFF
+                                            )
+                                        )
                                 )
                             }
                         }
@@ -7694,7 +7854,8 @@ private fun PlayerUi(
                                 rowKeys.forEachIndexed { c, label ->
                                     val selected = isTvGest && r == pinGridRow && c == pinGridCol
                                     Box(
-                                        Modifier.size(width = 64.dp, height = 44.dp)
+                                        Modifier
+                                            .size(width = 64.dp, height = 44.dp)
                                             .clip(RoundedCornerShape(22.dp))
                                             .background(
                                                 if (selected) MaterialTheme.colorScheme.primary
