@@ -435,6 +435,8 @@ class PlayerActivity : ComponentActivity() {
         // invalid, the clock must not read it - it takes the seed and ticks on from there)
         dvr.playheadMsState.value = targetMs
         dvr.seekSeedState.value = targetMs
+        val bar = if (dvr.recording) (dvr.durationMs - 45_000L).coerceAtLeast(1L) else dvr.durationMs
+        if (bar > 0L) scrub.fraction.value = (targetMs.toFloat() / bar.toFloat()).coerceIn(0f, 1f)
     }
 
     /** A double tap on the left/right side (YouTube-style): a 10 s skip.
@@ -640,7 +642,8 @@ class PlayerActivity : ComponentActivity() {
             playheadMs = { dvr.playheadMsState.value },
             seekable = { engine.ready && seekablePlayback },
             seekAbsolute = { ms -> dvrSeek.seekAbsolute(ms) },
-            poke = { pokeControls() })
+            poke = { pokeControls() },
+            onCommit = { showControlsFocused() })
     }
 
     // M651: keys during normal playback (block 4 of dispatchKeyEvent) in PlaybackKeys.kt
@@ -688,8 +691,11 @@ class PlayerActivity : ComponentActivity() {
         )
         val seekIdx = order.indexOf("seek")
         if (seekIdx < 0) { showControlsFocused(); return }
-        val wasOnSeek = controlsShown && controlNavState.value == seekIdx
+        val wasOnSeek = controlsShown && controlNavState.value == seekIdx && scrub.isScrubbing
         controlNavState.value = seekIdx
+        // M598: when the seek bar is opened or re-entered, anchor the cursor to the current
+        // playhead before stepping. Otherwise the bar keeps showing the last skip target and
+        // the next right/left jump is computed from stale UI state.
         if (!wasOnSeek) scrub.init()
         scrub.step(dir)
         scrub.scheduleAuto()
@@ -1300,7 +1306,16 @@ class PlayerActivity : ComponentActivity() {
                     },
                     onOptionsSelect = { idx -> selectOption(idx) },
                     onOptionsChange = { optionsOpen = it },
-                    onControlsVisibleChange = { controlsShown = it },
+                    onControlsVisibleChange = { visible ->
+                        controlsShown = visible
+                        if (!visible) {
+                            val order = playerControlOrder(
+                                !seekablePlayback && live.uuids.size > 1, seekablePlayback, pipButtonVisible(),
+                                timeshift.engaged.value, profileSwitchAvailable(), dvrRecordVisible(), teletextVisible()
+                            )
+                            controlNavState.value = order.indexOf("play").coerceAtLeast(0)
+                        }
+                    },
                     onOrientationLockChange = { locked ->
                         runCatching {
                             requestedOrientation =

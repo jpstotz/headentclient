@@ -60,6 +60,7 @@ internal fun DvrPositionTicker(
             // for the next tick; until then nobody else overwrites it.
             if (seed >= 0L && curLen > 0) {
                 onPosTimeMsSet(seed.coerceIn(0L, curBar))
+                onPlayheadMs(posTimeMs())
                 val denom = (curOff + curLen).coerceAtLeast(1L)
                 onPosFractionSet(((curOff + posTimeMs()).toFloat() / denom).coerceIn(0f, 1f))
                 onInitialSeekDoneSet(true)
@@ -76,6 +77,7 @@ internal fun DvrPositionTicker(
                 val tgt = pendingResumeMs().coerceIn(0L, curBar)
                 onSeekToMs(tgt)
                 onPosTimeMsSet(tgt)
+                onPlayheadMs(posTimeMs())
                 onPosFractionSet(((curOff + tgt).toFloat() / (curOff + curLen).coerceAtLeast(1L)).coerceIn(0f, 1f))
                 onPendingResumeMsSet(0)
                 onInitialSeekDoneSet(true)
@@ -109,6 +111,7 @@ internal fun DvrPositionTicker(
                         player.isSeekable && kotlin.math.abs(p - posFraction()) > 0.05f) {
                         onPosTimeMsSet((p * (curOff + curLen) - curOff).toLong()
                             .coerceIn(0L, curBar))
+                        onPlayheadMs(posTimeMs())
                     }
                     if (!rebuiltBySeek()) onPosFractionSet(p)
                 }
@@ -116,6 +119,7 @@ internal fun DvrPositionTicker(
                 if (lastPlayTickMs() > 0L && player.isPlaying) {
                     val d = (nowMs - lastPlayTickMs()).coerceIn(0L, 3000L)
                     onPosTimeMsSet((posTimeMs() + d).coerceIn(0L, curBar))
+                    onPlayheadMs(posTimeMs())
                 }
                 // M495: after the media is rebuilt the fraction from player.position is invalid,
                 // so the position on the bar must be derived from the clock (otherwise the indicator

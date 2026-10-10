@@ -25,7 +25,8 @@ internal class ScrubController(
     private val playheadMs: () -> Long,
     private val seekable: () -> Boolean,
     private val seekAbsolute: (Long) -> Unit,
-    private val poke: () -> Unit
+    private val poke: () -> Unit,
+    private val onCommit: () -> Unit = {}
 ) {
     val fraction = mutableStateOf(0f)
     private var autoJob: Job? = null
@@ -35,6 +36,7 @@ internal class ScrubController(
     private var holdSince = 0L
 
     val holding: Boolean get() = holdJob != null
+    val isScrubbing: Boolean get() = autoJob != null || holdJob != null
 
     fun cancelAuto() { autoJob?.cancel(); autoJob = null }
 
@@ -55,12 +57,18 @@ internal class ScrubController(
     fun commit(minDeltaMs: Long = 0L) {
         cancelAuto()
         holdJob?.cancel(); holdJob = null   // M598-fix2
-        if (!seekable()) return
+        lastUpMs = 0L
+        lastDir = 0
+        if (!seekable()) { onCommit(); return }
         val bar = barMs()
-        if (bar <= 0) return
+        if (bar <= 0) { onCommit(); return }
         val progMs = (fraction.value.coerceIn(0f, 1f) * bar).toLong()
-        if (minDeltaMs > 0L && kotlin.math.abs(progMs - playheadMs()) < minDeltaMs) return
+        if (minDeltaMs > 0L && kotlin.math.abs(progMs - playheadMs()) < minDeltaMs) {
+            onCommit()
+            return
+        }
         seekAbsolute(progMs)
+        onCommit()
     }
 
     /** Schedules automatic confirmation of the move after 2 s of inactivity (M597). */

@@ -121,7 +121,10 @@ internal class PlaybackKeys(
                     }
                     KeyEvent.KEYCODE_DPAD_LEFT -> if (down) {
                         if (onSeek) {
-                            if (event.repeatCount == 0) scrub.tapOrHold(-1)   // M598-fix2/fix4: click + smooth hold
+                            if (event.repeatCount == 0) {
+                                if (!scrub.isScrubbing && !scrub.continues(-1)) actions.initScrub()
+                                scrub.tapOrHold(-1)   // M598-fix2/fix4: click + smooth hold
+                            }
                         } else {
                             scrub.cancelAuto()
                             moveNav(-1)
@@ -130,7 +133,10 @@ internal class PlaybackKeys(
                     }
                     KeyEvent.KEYCODE_DPAD_RIGHT -> if (down) {
                         if (onSeek) {
-                            if (event.repeatCount == 0) scrub.tapOrHold(+1)   // M598-fix2/fix4: click + smooth hold
+                            if (event.repeatCount == 0) {
+                                if (!scrub.isScrubbing && !scrub.continues(+1)) actions.initScrub()
+                                scrub.tapOrHold(+1)   // M598-fix2/fix4: click + smooth hold
+                            }
                         } else {
                             scrub.cancelAuto()
                             moveNav(+1)
@@ -141,7 +147,7 @@ internal class PlaybackKeys(
                         if (down && event.repeatCount == 0) {
                             if (onSeek) {
                                 scrub.commit()   // M597: OK confirms immediately (the same path)
-                                actions.pokeControls()
+                                actions.showControlsFocused()
                             } else actions.activateControl(order.getOrNull(controlNav.value))
                         }
                         return true
